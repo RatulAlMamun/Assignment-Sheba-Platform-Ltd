@@ -2,13 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Api\ServiceController;
 
-Route::get('/', function () {
-    return (new BaseController)->sendSuccessJson(
-        ['timestamp' => now(),],
-        'Sheba api running...',
-    );
-});
+Route::get('/services', [ServiceController::class, 'index']);
+
 
 Route::fallback(function () {
     return (new BaseController)->sendErrorJson('Not Found!');
