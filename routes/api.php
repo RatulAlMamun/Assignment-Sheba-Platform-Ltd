@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ServiceController;
 
 Route::get('/services', [ServiceController::class, 'index']);
 Route::post('/book', [BookingController::class, 'store']);
+Route::get('/booking/{uuid}', [BookingController::class, 'show']);
 
 Route::fallback(function () {
     return (new BaseController)->sendErrorJson('Not Found!');

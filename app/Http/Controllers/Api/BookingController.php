@@ -31,4 +31,31 @@ class BookingController extends BaseController
             201
         );
     }
+
+    public function show(string $uuid): JsonResponse
+    {
+        $booking = Booking::where('uuid', $uuid)->with('service')->first();
+        if (!$booking) {
+            $this->sendErrorJson('Booking not found.');
+        }
+        $data = [
+            'booking_id'     => $booking->uuid,
+            'customer_name'  => $booking->customer_name,
+            'phone_number'   => $booking->phone_number,
+            'status'         => $booking->status->value,
+            'schedule_time'  => $booking->schedule_time->toDateTimeString(),
+            'service' => [
+                'id'          => $booking->service->id,
+                'name'        => $booking->service->name,
+                'category'    => $booking->service->category,
+                'price'       => $booking->service->price,
+                'description' => $booking->service->description,
+            ],
+        ];
+        return $this->sendSuccessJson(
+            $data,
+            "Service booked successfully!",
+            200
+        );
+    }
 }
