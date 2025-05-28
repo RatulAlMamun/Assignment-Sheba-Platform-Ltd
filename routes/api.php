@@ -18,6 +18,10 @@ Route::prefix('auth')->controller(AuthController::class)->group(function () {
     });
 });
 
+Route::prefix('admin')->middleware('jwt')->group(function () {
+    Route::apiResource('services', ServiceController::class)->except(['index']);
+});
+
 Route::fallback(function () {
     return (new BaseController)->sendErrorJson('Not Found!');
 });
