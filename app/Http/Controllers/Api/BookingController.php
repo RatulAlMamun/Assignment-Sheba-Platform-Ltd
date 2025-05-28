@@ -54,7 +54,7 @@ class BookingController extends BaseController
         ];
         return $this->sendSuccessJson(
             $data,
-            "Service booked successfully!",
+            "Service booking details.",
             200
         );
     }
