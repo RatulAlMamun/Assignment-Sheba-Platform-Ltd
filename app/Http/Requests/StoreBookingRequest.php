@@ -26,6 +26,7 @@ class StoreBookingRequest extends FormRequest
     {
         return [
             'customer_name' => 'required|string|max:255',
+            'email' => 'required|string|email',
             'phone_number' => 'required|string|max:20',
             'service_id'    => 'required|exists:services,id',
             'schedule_time' => 'required|date|after:now',

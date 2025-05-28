@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Booking;
 use Illuminate\Support\Str;
-use App\Enums\BookingStatus;
 use Illuminate\Http\Request;
+use App\Enums\BookingStatus;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\StoreBookingRequest;
+use App\Jobs\SendBookingConfirmationEmail;
+use App\Http\Requests\UpdateBookingStatusRequest;
 
 class BookingController extends BaseController
 {
@@ -18,6 +20,7 @@ class BookingController extends BaseController
         $services = Booking::select(
             'uuid',
             'customer_name',
+            'email',
             'phone_number',
             'service_id',
             'schedule_time',
@@ -32,6 +35,7 @@ class BookingController extends BaseController
         $booking = Booking::create([
             'uuid'           => Str::uuid(),
             'customer_name'  => $data['customer_name'],
+            'email'          => $data['email'],
             'phone_number'   => $data['phone_number'],
             'service_id'     => $data['service_id'],
             'schedule_time'  => $data['schedule_time'],
@@ -56,6 +60,7 @@ class BookingController extends BaseController
         $data = [
             'booking_id'     => $booking->uuid,
             'customer_name'  => $booking->customer_name,
+            'email'  => $booking->email,
             'phone_number'   => $booking->phone_number,
             'status'         => $booking->status->value,
             'schedule_time'  => $booking->schedule_time->toDateTimeString(),
@@ -70,6 +75,27 @@ class BookingController extends BaseController
         return $this->sendSuccessJson(
             $data,
             "Service booking details.",
+            200
+        );
+    }
+
+    public function updateStatus(UpdateBookingStatusRequest $request, string $uuid): JsonResponse
+    {
+        $booking = Booking::where('uuid', $uuid)->first();
+        if (!$booking) {
+            $this->sendErrorJson('Booking not found.');
+        }
+        if ($booking->status != BookingStatus::PENDING) {
+            $this->sendErrorJson('Only pending status can be change!');
+        }
+        $booking->status = $request->status;
+        $booking->save();
+        if ($booking->status === BookingStatus::CONFIRMED) {
+            SendBookingConfirmationEmail::dispatch($booking);
+        }
+        return $this->sendSuccessJson(
+            $booking,
+            "Booking status updated successfully.",
             200
         );
     }

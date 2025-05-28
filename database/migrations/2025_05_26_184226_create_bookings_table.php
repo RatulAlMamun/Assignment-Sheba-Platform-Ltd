@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('customer_name');
+            $table->string('email');
             $table->string('phone_number');
             $table->foreignId('service_id');
             $table->dateTime('schedule_time');

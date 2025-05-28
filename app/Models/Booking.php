@@ -16,6 +16,7 @@ class Booking extends Model
     protected $fillable = [
         'uuid',
         'customer_name',
+        'email',
         'phone_number',
         'service_id',
         'schedule_time',

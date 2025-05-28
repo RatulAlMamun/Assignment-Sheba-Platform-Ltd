@@ -21,6 +21,7 @@ Route::prefix('auth')->controller(AuthController::class)->group(function () {
 Route::prefix('admin')->middleware('jwt')->group(function () {
     Route::apiResource('services', ServiceController::class)->except(['index']);
     Route::get('bookings', [BookingController::class, 'index']);
+    Route::patch('bookings/{booking_uuid}/status', [BookingController::class, 'updateStatus']);
 });
 
 Route::fallback(function () {
