@@ -83,10 +83,7 @@ class BookingController extends BaseController
     {
         $booking = Booking::where('uuid', $uuid)->first();
         if (!$booking) {
-            $this->sendErrorJson('Booking not found.');
-        }
-        if ($booking->status != BookingStatus::PENDING) {
-            $this->sendErrorJson('Only pending status can be change!');
+            $this->sendErrorJson('Booking not found for.');
         }
         $booking->status = $request->status;
         $booking->save();

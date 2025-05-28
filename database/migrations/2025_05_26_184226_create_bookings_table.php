@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('phone_number');
             $table->foreignId('service_id');
             $table->dateTime('schedule_time');
-            $table->enum('status', ['pending', 'confirmed', 'completed'])->default('pending');
+            $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled'])->default('pending');
             $table->timestamps();
         });
     }

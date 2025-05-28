@@ -32,13 +32,12 @@ class Service extends Model
             'price' => 'decimal:2',
         ];
     }
-    
+
     /**
      * Get the bookings for the service.
      */
     public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
-
     }
 }
