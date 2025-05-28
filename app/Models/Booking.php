@@ -35,7 +35,7 @@ class Booking extends Model
         ];
     }
 
-     /**
+    /**
      * Get the service of the booking.
      */
     public function service(): BelongsTo

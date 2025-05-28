@@ -2,15 +2,30 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enums\BookingStatus;
 use App\Models\Booking;
 use Illuminate\Support\Str;
+use App\Enums\BookingStatus;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\StoreBookingRequest;
 
 class BookingController extends BaseController
 {
+    public function index(Request $request): JsonResponse
+    {
+        $limit = $request->get('limit', 15);
+        $services = Booking::select(
+            'uuid',
+            'customer_name',
+            'phone_number',
+            'service_id',
+            'schedule_time',
+            'status',
+        )->paginate($limit);
+        return $this->sendSuccessJson($services, "All bookings.", 200);
+    }
+
     public function store(StoreBookingRequest $request): JsonResponse
     {
         $data = $request->validated();
