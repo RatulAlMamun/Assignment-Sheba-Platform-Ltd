@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\BaseController;
-use App\Http\Requests\LoginRequest;
 use Illuminate\Http\JsonResponse;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\BaseController;
 
 class AuthController extends BaseController
 {
@@ -16,7 +17,7 @@ class AuthController extends BaseController
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        if (!$token = Auth::attempt($request->only('email', 'password'))) {
+        if (!$token = JWTAuth::attempt($request->only('email', 'password'))) {
             return $this->sendErrorJson(
                 'Unauthorized.',
                 ['error' => 'Invalid credentials'],
@@ -24,6 +25,35 @@ class AuthController extends BaseController
             );
         }
         return $this->respondWithToken($token, 'Login successfully.');
+    }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me(): JsonResponse
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return $this->sendErrorJson(
+                'User not found',
+                ['error' => 'User not found'],
+                404,
+            );
+        }
+        return $this->sendSuccessJson($user, 'Profile data');
+    }
+
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout(): JsonResponse
+    {
+        JWTAuth::invalidate(JWTAuth::getToken());
+        return $this->sendSuccessJson(null, 'Successfully logged out');
     }
 
     /**

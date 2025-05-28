@@ -10,8 +10,12 @@ Route::get('/services', [ServiceController::class, 'index']);
 Route::post('/book', [BookingController::class, 'store']);
 Route::get('/booking/{uuid}', [BookingController::class, 'show']);
 
-Route::middleware('api')->prefix('auth')->group(function () {
-    Route::post('login', [AuthController::class, 'login']);
+Route::prefix('auth')->controller(AuthController::class)->group(function () {
+    Route::post('login', 'login');
+    Route::middleware('jwt')->group(function () {
+        Route::get('me', 'me');
+        Route::post('logout', 'logout');
+    });
 });
 
 Route::fallback(function () {
